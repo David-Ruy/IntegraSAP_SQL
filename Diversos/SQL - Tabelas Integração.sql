@@ -1554,3 +1554,15 @@ ADD COLUMN SerialOrdemProducao VARCHAR(30) AFTER DocNumOrdemProducao;
 
 
 
+
+
+/**************************************************************************/
+#David Ruy <2026-07-24>
+#Melhoria nas Procedures EnviarDocEntry e EnviarDocEntryItem
+#Atualizar statusDoc (liberar para processo) apenas quando qtde de 
+#registros tbintegraSAP_DocItem = QtdeOriItens
+ALTER TABLE tbintegraSAP_Doc
+ADD  `QtdeOriItens` INT DEFAULT 0 AFTER DocTotal;
+
+
+

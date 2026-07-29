@@ -23,6 +23,7 @@ BLOCO1:BEGIN
    #Reviser David Ruy <2025-06-12 idPicking : Gerar Log
    #Reviser David Ruy <2026-05-07 xCampoAux1 e xCampoAux2, para quando precisar enviar 2 campos simultaneamente
    #Reviser David Ruy <2026-05-07 Implementado oNomeCampo = 'DocEntryRef'
+   #Reviser David Ruy <2026-07-29> Desabilitado | PROC_INTEGRA_GravarPicking fará essa funcionalidade
    *****************************************************************/
    DECLARE xIncAlt      VARCHAR(01)	DEFAULT 'I';
    DECLARE excecao      INT DEFAULT 0;
@@ -89,7 +90,9 @@ BLOCO1:BEGIN
          WHERE DocEntry = oDocEntry
            AND DocTipo  = oDocTipo;
          
-         
+         #2026-07-29 Desabilitado
+         #PROC_INTEGRA_GravarPicking fará essa funcionalidade
+         /*
          SET @LineNum = -1;
          UPDATE tbintegraSAP_DocItem
          SET LineNumPk = @LineNum := @LineNum + 1
@@ -107,7 +110,7 @@ BLOCO1:BEGIN
          WHERE DocEntry = oDocEntry
            AND DocTipo  = oDocTipo
            AND StatusItem = 0;
-           
+         */
          
          #2025-06-12 Buscar DocNum para gerar log
          SELECT DocNum INTO xDocNum FROM tbintegraSAP_Doc
