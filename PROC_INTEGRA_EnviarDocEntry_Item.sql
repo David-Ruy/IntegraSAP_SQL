@@ -266,7 +266,7 @@ BLOCO1:BEGIN
      AND tbTopo.DocNum   = oDocNum;
    
    IF xQtdeOriItens = xLineNum THEN
-      CALL PROC_INTEGRA_AtualizarStatusDocEntry('999999', oDocEntry, oDocTipo, oDocNum, 1);
+      CALL PROC_INTEGRA_AtualizarStatusDocEntry('999999', oDocEntry, oDocTipo, oDocNum, 1, @R, @M);
    END IF;
    
    

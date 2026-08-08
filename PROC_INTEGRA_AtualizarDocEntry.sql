@@ -39,7 +39,10 @@ BLOCO1:BEGIN
       GET DIAGNOSTICS CONDITION 1 MENSAGEM = MESSAGE_TEXT;
       ROLLBACK;
       SET RESULTADO = 0;
-      SET MENSAGEM  = fnMensagemExcecao(MENSAGEM);
+      #SET MENSAGEM  = fnMensagemExcecao(MENSAGEM);
+      SET MENSAGEM  = fnMensagemExcecao(
+         CONCAT('ERRO Gerar DocEntry ',oDocTipo,"",oDocNum,"|",oDocEntry," ",MENSAGEM) );
+      
       SET excecao = 1;
    END;
    

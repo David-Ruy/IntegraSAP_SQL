@@ -17,7 +17,6 @@ BLOCO1:BEGIN
                 4 - Finalizado Não Retornado para SAP
                 5 - Finalizado Retornado para SAP
    *******************************************************************************/
-
   /****************************************************************/
   /****************DECLARAR VARIÁVEIS AUXILIARES
   /****************************************************************/
@@ -30,7 +29,8 @@ BLOCO1:BEGIN
       flg_atualizar_terceiro, tipo_doc_terceiro_entrada, tipo_doc_terceiro_saida,
       chave_doc_terceiro_entrada, chave_doc_terceiro_saida
       FROM of_logistica.tbwms_inventario_terceiro
-      WHERE dthr_leitura_terceiro IS NULL;
+      WHERE dthr_leitura_terceiro IS NULL
+      AND dthr_cancel IS NULL;
    
    ELSEIF oTipoRetorno = 1 THEN
    
@@ -47,9 +47,9 @@ BLOCO1:BEGIN
       WHERE dthr_leitura_terceiro IS NOT NULL
         AND dthr_retorno_terceiro IS NULL
         AND data_final IS NULL
+        AND dthr_cancel IS NULL
       HAVING Qtde_1a_Contagem < QtdeItens;
         
-
    ELSEIF oTipoRetorno = 2 THEN
    
       SELECT id_inventario, chave_terceiro, nome_terceiro, cnpj_cpf_cli, 
@@ -68,9 +68,9 @@ BLOCO1:BEGIN
       WHERE dthr_leitura_terceiro IS NOT NULL
         AND dthr_retorno_terceiro IS NULL
         AND data_final IS NULL
+        AND dthr_cancel IS NULL
       HAVING Qtde_1a_Contagem = QtdeItens 
          AND Qtde_2a_Contagem < Qtde_1a_Contagem;
-
    ELSEIF oTipoRetorno = 3 THEN
    
       SELECT id_inventario, chave_terceiro, nome_terceiro, cnpj_cpf_cli, 
@@ -89,9 +89,9 @@ BLOCO1:BEGIN
       WHERE dthr_leitura_terceiro IS NOT NULL
         AND dthr_retorno_terceiro IS NULL
         AND data_final IS NULL
+        AND dthr_cancel IS NULL
       HAVING Qtde_1a_Contagem = QtdeItens 
          AND Qtde_2a_Contagem = Qtde_1a_Contagem;
-
    ELSEIF oTipoRetorno = 4 THEN
    
       SELECT id_inventario, chave_terceiro, nome_terceiro, cnpj_cpf_cli, 
@@ -109,11 +109,11 @@ BLOCO1:BEGIN
       FROM of_logistica.tbwms_inventario_terceiro
       WHERE dthr_leitura_terceiro IS NOT NULL
         AND dthr_retorno_terceiro IS NULL
-        AND data_final IS NOT NULL;
+        AND data_final IS NOT NULL
+        AND dthr_cancel IS NULL;
    
    
    ELSEIF oTipoRetorno = 5 THEN
-
       SELECT id_inventario, chave_terceiro, nome_terceiro, cnpj_cpf_cli, 
              data_inicio, data_final, dthr_leitura_terceiro, dthr_retorno_terceiro,
              flg_atualizar_terceiro, tipo_doc_terceiro_entrada, tipo_doc_terceiro_saida,
@@ -129,14 +129,12 @@ BLOCO1:BEGIN
       FROM of_logistica.tbwms_inventario_terceiro
       WHERE dthr_leitura_terceiro IS NOT NULL
         AND dthr_retorno_terceiro IS NOT NULL
-        AND data_final IS NOT NULL;
-
+        AND data_final IS NOT NULL
+        AND dthr_cancel IS NULL;
    ELSE
-
       SELECT 0 AS RESULTADO, "Opção incorreta - Selecione parametro de 0 à 5" AS MENSAGEM;
    
    END IF;
-
    
 END$$
 

@@ -1566,3 +1566,4 @@ ADD  `QtdeOriItens` INT DEFAULT 0 AFTER DocTotal;
 
 
 
+

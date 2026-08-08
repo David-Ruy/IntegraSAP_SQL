@@ -4,23 +4,19 @@ DROP PROCEDURE IF EXISTS `PROC_INTEGRA_INVENTARIO_TERCEIRO_ATUALIZAR_ITEM`$$
 
 CREATE PROCEDURE `PROC_INTEGRA_INVENTARIO_TERCEIRO_ATUALIZAR_ITEM`(
    IN oCodUsuario				   VARCHAR(10),
-
    IN oIdInventario     VARCHAR(10),
    IN oItemCode         VARCHAR(30),
    IN oItemName         VARCHAR(100),
    IN oflg_series       TINYINT,
    IN oflg_lotes        TINYINT,
-
    IN oEmbVendas        VARCHAR(10),
    IN oFatorConvVendas  DECIMAL(18,6),
    IN oUnidadeCompras   VARCHAR(10),
    IN oFatorConvCompras DECIMAL(18,6),
    IN oEmbEstoque       VARCHAR(10),
    IN oBarCode          VARCHAR(200),
-
    IN oQtdeEstoque      DECIMAL(18,6),
    IN oValorUnitario    DECIMAL(18,6),
-
    IN oSerieFabr        VARCHAR(50),
    IN oNumLoteFabr      VARCHAR(50),
    IN oDataFabr         VARCHAR(20),
@@ -39,8 +35,9 @@ BLOCO1:BEGIN
    @Creation <2026-04-23>
    @Description Esta rotina insere itens e atualiza as tabelas tbwms_inventario_terceiro_produto e 
                 tbwms_inventario_terceiro_produto_serie_lote para o controle de inventário em terceiros
+   @Reviser <David Ruy (OVERFLASH)>
+   @Description Ajuste no retorno da mensagem IFNULL
    *******************************************************************************/
-
   /****************************************************************/
   /****************DECLARAR VARIÁVEIS AUXILIARES
   /****************************************************************/
@@ -52,9 +49,6 @@ BLOCO1:BEGIN
    DECLARE xdata_final               DATETIME;
    DECLARE xVarLotesSeries           INT DEFAULT 0;
    DECLARE xQtdeItens                INT DEFAULT 0;
-
-
-
    DECLARE EXIT HANDLER FOR SQLEXCEPTION
    BEGIN
        GET DIAGNOSTICS CONDITION 1 MENSAGEM = MESSAGE_TEXT;
@@ -70,7 +64,6 @@ BLOCO1:BEGIN
    
    SET RESULTADO = 1;
    SET MENSAGEM = "Inclusão do item realizado com sucesso !";
-
    
    
    
@@ -84,7 +77,7 @@ BLOCO1:BEGIN
    #Validação de conclusão do inventário, não permite inserir mais itens
    IF (xdthr_retorno_terceiro IS NOT NULL) OR (xdata_final IS NOT NULL) THEN
       SET RESULTADO = 0;
-      SET MENSAGEM  = CONCAT('Inventário já foi finalizado ! Data Finalização : ', xdata_final, ', Data Retorno : ', xdthr_retorno_terceiro);
+      SET MENSAGEM  = CONCAT('Inventário já foi finalizado ! Data Finalização : ', IFNULL(xdata_final,'n/a'), ', Data Retorno : ', IFNULL(xdthr_retorno_terceiro,'n/a'));
       ROLLBACK;
       LEAVE bloco1;
    END IF;
@@ -162,7 +155,6 @@ BLOCO1:BEGIN
       
    END IF;
    
-
    #Insere/Atualiza Lote/Série
    IF IFNULL(oSerieFabr,'') <> '' OR IFNULL(oNumLoteFabr,'') <> '' THEN
    
@@ -178,7 +170,6 @@ BLOCO1:BEGIN
                      
          SET RESULTADO = 1;
          SET MENSAGEM = CONCAT(MENSAGEM, " Inclusão do lote/série realizado com sucesso !");
-
          INSERT INTO of_logistica.tbwms_inventario_terceiro_produto_serie_lote (
                 id_inventario_produto, data_fabr, data_valid, 
                 numero_lote_fabr, numero_serie, 
@@ -192,7 +183,6 @@ BLOCO1:BEGIN
       
          SET RESULTADO = 1;
          SET MENSAGEM = CONCAT(MENSAGEM, " Alteração do lote/série realizado com sucesso !");
-
          UPDATE of_logistica.tbwms_inventario_terceiro_produto_serie_lote 
          SET data_fabr            = oDataFabr,  
              data_valid           = oDataValid, 
@@ -208,7 +198,6 @@ BLOCO1:BEGIN
       END IF;
    
    END IF;
-
    COMMIT;
    
    SELECT COUNT(*) INTO xQtdeItens 
@@ -223,10 +212,8 @@ BLOCO1:BEGIN
       UPDATE of_logistica.tbwms_inventario_terceiro
       SET dthr_leitura_terceiro = NOW()
       WHERE id_inventario = oIdInventario;
-
       SET RESULTADO = 1;
       SET MENSAGEM = CONCAT(MENSAGEM, " - Leitura Contábil concluída.");
-
    END IF;
    
    
